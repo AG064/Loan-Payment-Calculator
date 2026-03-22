@@ -1,0 +1,72 @@
+@font-face {
+  font-family: 'Swedbank Headline';
+  src: url('./swedbank-fonts/SwedbankHeadline-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #fdf6ee;
+  color: #2F2424;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Swedbank Headline', Arial, sans-serif;
+  color: #2F2424;
+  margin-top: 0;
+}
+
+/* main app container */
+.wizard-card {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 600px;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* important for SPA functionality */
+.hidden {
+  display: none !important;
+}
+
+.orange-text {
+  color: #fb4f00;
+}
+
+.links {
+  color: #267a7c;
+  text-decoration: none;
+}
+
+.links:hover {
+  text-decoration: underline;
+}
+
+.btn {
+  background-color: #fb4f00;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+}
+
+.btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.button-selected {
+  background-color: #fdc82a;
+}
