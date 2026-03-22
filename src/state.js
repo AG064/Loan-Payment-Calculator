@@ -30,13 +30,13 @@ export class State {
     }
 
     set income(value) {
-        const num = Number(value);
+        const allowed = ["<1000€", "1000–2000€", ">2000€"]
 
-        if (value == null || Number.isNaN(num) || num <= 0) {
-            throw new Error("Income must be a positive number!");
+        if (!allowed.includes(value)) {
+            throw new Error("Invalid value!");
         }
 
-        this._income = num;
+        this._income = value;
     }
 
     // loanAmount
