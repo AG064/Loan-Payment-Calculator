@@ -23,13 +23,8 @@ function handleClick(e) {
     if (e.target.id === "accept-checkbox") {
         view.allowAccept();
     }
-    if (e.target.id === "accept-terms") {
-        view.removeOverlay();
-    }
-
-    if (e.target.id === "decline-terms") {
-        view.renderIntro();
-        view.removeOverlay();
+    if (e.target.id === "back") {
+        view.allowAccept(true)
     }
     if (e.target.id === "back-to-intro") {
         view.renderIntro();
@@ -41,55 +36,49 @@ function startFlow() {
     step = 1;
 
     view.renderStep1(state);
-
-    
 }
 
 // next button
 function next() {
     try {
-        // if the overlay is open - validate consents and close it
-        const overlay = document.querySelector("#terms-privacy");
+        collectData();
 
-        if (overlay) {
+        // step1 → step2 (terms)
+        if (step === 1) {
+            step = 2;
+            view.renderTermsPrivacy();
+            return;
+        }
+
+        // step2 (terms) → step3 (loan details)
+        if (step === 2) {
             const { consents } = view.getStep3Data();
 
             if (!consents.length) {
                 throw new Error("Accept at least one consent!");
             }
 
-            view.removeOverlay();
-            return; // close overlay and stay on the same step
-        }
-
-        collectData();
-
-        // step1 -> step2
-        if (step === 1) {
-            step = 2;
-            view.renderStep2(state);
-            
-            return;
-        }
-
-        // step2 -> step3 (textarea)
-        if (step === 2) {
-            
             step = 3;
-            view.renderStep3();
-            view.renderTermsPrivacy();
+            view.renderStep2(state);
             return;
         }
 
-        // step3 -> summary
+        // step3 (loan) → step4 (textarea)
         if (step === 3) {
+            step = 4;
+            view.renderStep3();
+            return;
+        }
+
+        // step4 (textarea) → summary
+        if (step === 4) {
             const { additionalInfo } = view.getStep4Data();
 
             if (!additionalInfo || additionalInfo.trim().length < 10) {
                 throw new Error("Minimum 10 characters required!");
             }
 
-            step = 4;
+            step = 5;
             renderSummary();
             return;
         }
@@ -101,7 +90,7 @@ function next() {
 
 // back button
 function back() {
-    const overlay = document.querySelector("#terms-privacy");
+    if (step === 0) return;
 
     // if overlay is open - close it
     if (overlay) {
@@ -109,11 +98,9 @@ function back() {
         return;
     }
 
-    if (step === 0) return;
-
     if (step === 3) {
         step = 2;
-        view.renderStep2(state);
+        view.renderTermsPrivacy();
         return;
     }
 
@@ -136,7 +123,7 @@ function collectData() {
         state.employmentStatus = employmentStatus;
     }
 
-    if (step === 2) {
+    if (step === 3) {
         const data = view.getStep2Data();
 
         state.income = data.income;
@@ -148,7 +135,7 @@ function collectData() {
 
 // live calculator
 function handleInput() {
-    if (step !== 2) return;
+    if (step !== 3) return;
 
     try {
         const data = view.getStep2Data();
