@@ -15,7 +15,7 @@ function init() {
     document.addEventListener("input", handleInput);
 }
 
-// 🔹 events
+// events
 function handleClick(e) {
     if (e.target.id === "start") startFlow();
     if (e.target.id === "next") next();
@@ -36,7 +36,7 @@ function handleClick(e) {
     }
 }
 
-// 🔹 старт → step1 + overlay
+// start -> step1 -> overlay
 function startFlow() {
     step = 1;
 
@@ -45,10 +45,10 @@ function startFlow() {
     
 }
 
-// 🔹 next
+// next button
 function next() {
     try {
-        // 🔥 если открыт overlay (terms)
+        // if the overlay is open - validate consents and close it
         const overlay = document.querySelector("#terms-privacy");
 
         if (overlay) {
@@ -59,12 +59,12 @@ function next() {
             }
 
             view.removeOverlay();
-            return; // остаёмся на step1
+            return; // close overlay and stay on the same step
         }
 
         collectData();
 
-        // step1 → step2
+        // step1 -> step2
         if (step === 1) {
             step = 2;
             view.renderStep2(state);
@@ -72,7 +72,7 @@ function next() {
             return;
         }
 
-        // step2 → step4 (textarea)
+        // step2 -> step3 (textarea)
         if (step === 2) {
             
             step = 3;
@@ -81,7 +81,7 @@ function next() {
             return;
         }
 
-        // step3 → summary
+        // step3 -> summary
         if (step === 3) {
             const { additionalInfo } = view.getStep4Data();
 
@@ -99,11 +99,11 @@ function next() {
     }
 }
 
-// 🔹 back
+// back button
 function back() {
     const overlay = document.querySelector("#terms-privacy");
 
-    // если overlay открыт → просто закрываем
+    // if overlay is open - close it
     if (overlay) {
         view.removeOverlay();
         return;
@@ -129,7 +129,7 @@ function back() {
     }
 }
 
-// 🔹 сбор данных
+// data collection from steps
 function collectData() {
     if (step === 1) {
         const { employmentStatus } = view.getStep1Data();
@@ -146,7 +146,7 @@ function collectData() {
     }
 }
 
-// 🔹 live калькулятор
+// live calculator
 function handleInput() {
     if (step !== 2) return;
 
@@ -165,7 +165,7 @@ function handleInput() {
     } catch {}
 }
 
-// 🔹 summary
+// summary
 function renderSummary() {
     const payment = calculateMonthlyPayment(
         state.loanAmount,
@@ -176,7 +176,7 @@ function renderSummary() {
     view.renderSummary(state, payment);
 }
 
-// 🔹 калькулятор
+// calculator function
 function calculateMonthlyPayment(amount, rate, months) {
     const monthlyRate = rate / 100 / 12;
 

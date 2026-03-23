@@ -179,7 +179,7 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
 
         checkboxLabelEmail.append(checkboxEmail, "I agree to receive offers (optional)")
 
-        // 🔹 кнопки
+        // buttons
         const actions = document.createElement("div");
         actions.className = "actions";
 
@@ -196,7 +196,7 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
 
         actions.append(accept, decline);
 
-        // 🔹 сборка
+        // build modal
         box.append(title, textBox, checkboxLabel, checkboxLabelEmail, actions);
         overlay.appendChild(box);
 
