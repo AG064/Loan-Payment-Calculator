@@ -175,7 +175,19 @@ export class View {
 
         payment.append(text, span, euro);
 
-        this.app.append(title, incomeLabel, income, loanError, loanLabel, loan, periodLabel, period, rateLabel, rate, payment);
+        this.app.append(
+            title, 
+            incomeLabel, 
+            income, 
+            loanLabel, 
+            loanError,
+            loan, 
+            periodLabel, 
+            period, 
+            rateLabel, 
+            rate, 
+            payment
+        );
     }
 
     renderStep3TermsPrivacy() {
@@ -248,7 +260,16 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         checkboxEmail.id = "receive-offers";
         checkboxLabelEmail.append(checkboxEmail, "I agree to receive offers (optional)");
 
-        this.app.append(title, textBox, consentsError, checkboxLabel, checkboxLabelEmail, emailError, emailLabel, emailField);
+        this.app.append(
+            title, 
+            textBox, 
+            checkboxLabel, 
+            consentsError, 
+            checkboxLabelEmail, 
+            emailError, 
+            emailLabel, 
+            emailField
+        );
     }
 
     renderEmailField() {
@@ -366,7 +387,7 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         textarea.className = "form-control";
         textarea.placeholder = "Anything else you want to add?";
 
-        this.app.append(title, additionalInfoError, textareaLabel, textarea);
+        this.app.append(title, textareaLabel, additionalInfoError, textarea);
     }
 
     renderSummary(state, payment) {
