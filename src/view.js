@@ -126,19 +126,14 @@ export class View {
     }
 
     renderTermsPrivacy() {
-        document.querySelector(".wizard-card").classList.add("blur");
-
-        const overlay = document.createElement("div");
-        overlay.className = "overlay";
-        overlay.id = "terms-privacy";
-
-        const box = document.createElement("div");
-        box.className = "modal";
+        this.clear();
 
         const title = document.createElement("h2");
         title.textContent = "Terms & Privacy";
 
-        //text
+        const nextBtn = document.querySelector("#next");
+        nextBtn.disabled = true;
+
         const textBox = document.createElement("div");
         textBox.className = "terms-text";
 
@@ -161,60 +156,40 @@ Donec sit amet interdum nibh. Quisque viverra, erat sed tempor convallis, sem el
 
 Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet semper risus nisi sed libero. Curabitur aliquet quam lacus, quis porta orci finibus sit amet. Praesent ac congue purus, quis tempor nulla. Phasellus in viverra felis. Ut consectetur nibh quis lectus molestie, quis bibendum neque condimentum. Praesent sed erat a libero dapibus maximus vel in nibh. Morbi accumsan ultricies odio id gravida. Donec eget purus finibus lectus laoreet molestie.</p> 
         `;
-        // checkbox "I accept Terms & Privacy"
-        const checkboxLabel = document.createElement("label");
 
+        const checkboxLabel = document.createElement("label");
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.id = "accept-checkbox";
-
         checkboxLabel.append(checkbox, " I accept Terms & Privacy");
 
-        // checkbox "I agree to receive offers (optional)"
         const checkboxLabelEmail = document.createElement("label");
-
         const checkboxEmail = document.createElement("input");
         checkboxEmail.type = "checkbox";
         checkboxEmail.id = "recive-offers";
+        checkboxLabelEmail.append(checkboxEmail, "I agree to receive offers (optional)");
 
-        checkboxLabelEmail.append(checkboxEmail, "I agree to receive offers (optional)")
+        this.app.append(title, textBox, checkboxLabel, checkboxLabelEmail);
+    }
 
-        // 🔹 кнопки
-        const actions = document.createElement("div");
-        actions.className = "actions";
+    renderEmailField(state) {
+        const emailField = document.createElement("input")
 
-        const accept = document.createElement("button");
-        accept.className = "btn";
-        accept.id = "accept-terms";
-        accept.disabled = true
-        accept.textContent = "Accept";
-
-        const decline = document.createElement("button");
-        decline.className = "btn";
-        decline.id = "decline-terms";
-        decline.textContent = "Decline";
-
-        actions.append(accept, decline);
-
-        // 🔹 сборка
-        box.append(title, textBox, checkboxLabel, checkboxLabelEmail, actions);
-        overlay.appendChild(box);
-
-        document.body.appendChild(overlay);
+        emailField.type = "string";
+        emailField.id = "email-notifiations";
+        emailField.placeholder = "Email";
+        emailField.value = state?._userEmail ?? "";
     }
 
     removeOverlay() {
-        const overlay = document.querySelector("#terms-privacy");
-        if (overlay) overlay.remove();
-
-        document.querySelector(".wizard-card").classList.remove("blur");
+        // No longer needed - terms is now a regular step
     }
 
-    allowAccept() {
+    allowAccept(back = false) {
         const checkbox = document.querySelector("#accept-checkbox");
-        const acceptBtn = document.querySelector("#accept-terms");
-
-        acceptBtn.disabled = !checkbox.checked;
+        const nextBtn = document.querySelector("#next");
+        if (back) nextBtn.disabled = false;
+        nextBtn.disabled = !checkbox.checked;
     }
 
 

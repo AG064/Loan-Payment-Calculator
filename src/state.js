@@ -4,6 +4,24 @@ export class State {
     _loanAmount = null;
     _loanPeriod = null;
     _interestRate = null;
+    _userEmail = null;
+
+    get userEmail() {
+        return this._userEmail;
+    }
+
+    set userEmail(value) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (
+            value == null ||
+            typeof value !== "string" ||
+            !regex.test(value)
+        ) {
+            throw new Error("Invalid email format!");
+        }
+
+        this._userEmail = value;
+    }
 
     // employmentStatus
     get employmentStatus() {
