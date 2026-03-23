@@ -92,6 +92,11 @@ function back() {
 
     if (step === 0 || step === 1) return;
 
+    try {
+        collectData();
+    } catch (e) {
+        console.debug("Draft data validation failed on back navigation. Ignoring:", e.message); // we can ignore validation errors on back navigation, because user might want to go back and fix something
+    }
     if (step === 4) {
         step = 3;
         view.renderStep3(state);
