@@ -17,16 +17,15 @@ function init() {
 
 // events
 function handleClick(e) {
+    view.clearError(); // so that error is cleared when user tries to interact again, not only when going back or forward
     if (e.target.id === "start") startFlow();
     if (e.target.id === "next") next();
     if (e.target.id === "back") back();
     if (e.target.id === "accept-checkbox") {
         view.allowAccept();
     }
-    if (e.target.id === "back") {
-        view.allowAccept(true)
-    }
     if (e.target.id === "back-to-intro") {
+        step = 0;
         view.renderIntro();
     }
 }
@@ -40,44 +39,42 @@ function startFlow() {
 
 // next button
 function next() {
+    view.clearError();
     try {
         collectData();
 
-        // step1 → step2 (terms)
+        // step1 -> step2 (loan details)
         if (step === 1) {
             step = 2;
-            view.renderTermsPrivacy();
-            return;
-        }
-
-        // step2 (terms) → step3 (loan details)
-        if (step === 2) {
-            const { consents } = view.getStep3Data();
-
-            if (!consents.length) {
-                throw new Error("Accept at least one consent!");
-            }
-
-            step = 3;
             view.renderStep2(state);
             return;
         }
 
-        // step3 (loan) → step4 (textarea)
-        if (step === 3) {
-            step = 4;
-            view.renderStep3();
+        // step2 (loan details ) -> step3 (calculator)
+        if (step === 2) {
+            step = 3;
+            view.renderStep3(state);
             return;
         }
 
-        // step4 (textarea) → summary
+        // step3 (consents) -> step4 (textarea)
+        if (step === 3) {
+            const { consents } = view.getStep3Data();
+            if (!consents.length) {
+                throw new Error("Accept at least one consent!");
+            }
+            step = 4;
+            view.renderStep4();
+            return;
+        }
+
+        // step4 (textarea) -> summary
         if (step === 4) {
             const { additionalInfo } = view.getStep4Data();
 
             if (!additionalInfo || additionalInfo.trim().length < 10) {
                 throw new Error("Minimum 10 characters required!");
             }
-
             step = 5;
             renderSummary();
             return;
@@ -90,17 +87,19 @@ function next() {
 
 // back button
 function back() {
-    if (step === 0) return;
+    view.clearError();
 
-    // if overlay is open - close it
-    if (overlay) {
-        view.removeOverlay();
+    if (step === 0 || step === 1) return;
+
+    if (step === 4) {
+        step = 3;
+        view.renderStep3(state);
         return;
     }
 
     if (step === 3) {
         step = 2;
-        view.renderTermsPrivacy();
+        view.renderStep2(state);
         return;
     }
 
@@ -123,7 +122,7 @@ function collectData() {
         state.employmentStatus = employmentStatus;
     }
 
-    if (step === 3) {
+    if (step === 2) {
         const data = view.getStep2Data();
 
         state.income = data.income;
@@ -135,7 +134,7 @@ function collectData() {
 
 // live calculator
 function handleInput() {
-    if (step !== 3) return;
+    if (step !== 2) return;
 
     try {
         const data = view.getStep2Data();

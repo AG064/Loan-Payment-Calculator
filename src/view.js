@@ -23,7 +23,7 @@ export class View {
 
     renderStep1(state) {
         this.clear();
-
+        document.querySelector("#next").disabled = false;
         document.querySelector(".navigation").removeAttribute("hidden");
 
         const title = document.createElement("h2");
@@ -39,6 +39,7 @@ export class View {
 
         options.forEach(opt => {
             const label = document.createElement("label");
+            label.className = "radio-label";
 
             const input = document.createElement("input");
             input.type = "radio";
@@ -56,13 +57,14 @@ export class View {
 
     renderStep2(state) {
         this.clear();
-
+        document.querySelector("#next").disabled = false;
         const title = document.createElement("h2");
         title.textContent = "Loan details";
 
         // income
         const income = document.createElement("select");
         income.id = "income";
+        income.className = "form-control";
 
         ["<1000€", "1000–2000€", ">2000€"].forEach(val => {
             const option = document.createElement("option");
@@ -76,6 +78,7 @@ export class View {
 
         // loan amount
         const loan = document.createElement("input");
+        loan.className = "form-control";
         loan.type = "number";
         loan.id = "loanAmount";
         loan.placeholder = "Loan amount";
@@ -84,6 +87,8 @@ export class View {
         // period
         const period = document.createElement("select");
         period.id = "loanPeriod";
+        period.className = "form-control";
+
 
         [12, 24, 36].forEach(val => {
             const option = document.createElement("option");
@@ -98,6 +103,7 @@ export class View {
         // interest
         const rate = document.createElement("select");
         rate.id = "interestRate";
+        rate.className = "form-control";
 
         [5, 10, 15].forEach(val => {
             const option = document.createElement("option");
@@ -125,7 +131,7 @@ export class View {
         this.app.append(title, income, loan, period, rate, payment);
     }
 
-    renderTermsPrivacy() {
+    renderStep3() {
         this.clear();
 
         const title = document.createElement("h2");
@@ -158,12 +164,14 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         `;
 
         const checkboxLabel = document.createElement("label");
+        checkboxLabel.className = "checkbox-label";
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.id = "accept-checkbox";
         checkboxLabel.append(checkbox, " I accept Terms & Privacy");
 
         const checkboxLabelEmail = document.createElement("label");
+        checkboxLabelEmail.className = "checkbox-label";
         const checkboxEmail = document.createElement("input");
         checkboxEmail.type = "checkbox";
         checkboxEmail.id = "recive-offers";
@@ -185,22 +193,25 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         // No longer needed - terms is now a regular step
     }
 
-    allowAccept(back = false) {
+    allowAccept() {
         const checkbox = document.querySelector("#accept-checkbox");
         const nextBtn = document.querySelector("#next");
-        if (back) nextBtn.disabled = false;
+        if (checkbox && nextBtn) {
         nextBtn.disabled = !checkbox.checked;
+        }
     }
 
 
-    renderStep3() {
+    renderStep4() {
         this.clear();
-
+        document.querySelector("#next").disabled = false;
         const title = document.createElement("h2");
         title.textContent = "Additional info";
 
         const textarea = document.createElement("textarea");
         textarea.id = "additionalInfo";
+        textarea.className = "form-control";
+        textarea.placeholder = "Anything else you want to add?";
 
         this.app.append(title, textarea);
     }
@@ -229,7 +240,7 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
             list.appendChild(p);
         });
 
-        const btn = document.createElement("btn");
+        const btn = document.createElement("button");
         btn.className = "btn";
         btn.id = "back-to-intro";
         btn.textContent = "Back To Intro";
@@ -271,6 +282,20 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
 
     
     showError(msg) {
-        alert(msg);
+        this.clearError();
+
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "error-msg";
+        errorDiv.id = "app-error";
+        errorDiv.textContent = msg;
+
+        this.app.appendChild(errorDiv);
+    }
+
+    clearError() {
+        const existingError = document.querySelector("#app-error");
+        if (existingError) {
+            existingError.remove();
+        }
     }
 }
