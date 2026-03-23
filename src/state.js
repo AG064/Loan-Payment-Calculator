@@ -59,13 +59,25 @@ export class State {
 
     // loanAmount
     get loanAmount() {
-        return this._loanAmount;
-    }
+            return this._loanAmount;
+        }
 
-    set loanAmount(value) {
+        set loanAmount(value) {
+        if (value == null || value === "") {
+            throw new Error("Loan amount required and cannot be null!");
+        }
+
         const num = Number(value);
 
-        if (value == null || Number.isNaN(num) || num <= 0) {
+        if (Number.isNaN(num)) {
+            throw new Error("Loan amount must be a valid number!");
+        }
+
+        if ( num === 0) {
+            throw new Error("Loan amount cannot be null!");
+        }
+
+        if (num < 0) {
             throw new Error("Loan amount must be a positive number!");
         }
 

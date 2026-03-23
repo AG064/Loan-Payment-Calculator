@@ -29,6 +29,12 @@ function handleClick(e) {
     if (e.target.id === "back-to-intro") {
         view.renderIntro();
     }
+    if (e.target.id === "recive-offers") {
+        view.renderEmailField(state);
+    }
+    if (e.target.name === "employment") {
+        view.updateNextButtonState();
+    }
 }
 
 // 🔹 старт → step1
@@ -41,10 +47,11 @@ function startFlow() {
 // 🔹 next
 function next() {
     try {
-        collectData();
+        
 
         // step1 → step2 (terms)
         if (step === 1) {
+            collectData();
             step = 2;
             view.renderTermsPrivacy();
             return;
@@ -55,7 +62,32 @@ function next() {
             const { consents } = view.getStep3Data();
 
             if (!consents.length) {
+                view.showConsentsError("Accept at least one consent!");
                 throw new Error("Accept at least one consent!");
+            }
+
+            view.hideConsentsError();
+
+            // Check email if checkbox is checked
+            const emailCheckbox = document.querySelector("#recive-offers");
+            if (emailCheckbox.checked) {
+                const email = view.getEmailData();
+                
+                if (!email || email.trim() === "") {
+                    view.showEmailError("Email is required when you agree to receive offers!");
+                    throw new Error("Email is required when you agree to receive offers!");
+                }
+
+                try {
+                    // Validate email format by setting to state
+                    state.userEmail = email;
+                    view.hideEmailError();
+                } catch (e) {
+                    view.showEmailError(e.message);
+                    throw e;
+                }
+            } else {
+                view.hideEmailError();
             }
 
             step = 3;
@@ -65,6 +97,23 @@ function next() {
 
         // step3 (loan) → step4 (textarea)
         if (step === 3) {
+            const data = view.getStep2Data();
+
+            // 1. Check for empty fields first
+            // if (!data.loanAmount || !data.interestRate || !data.loanPeriod) {
+            //     view.showLoanError("Loan amount required!");
+            //     throw new Error("All loan fields are required!");
+            // }
+
+            // 2. Try updating the state, and catch any validation errors (like negative numbers)
+            try {
+                collectData();
+            } catch (e) {
+                view.showLoanError(e.message);
+                throw e; // Stop execution so it doesn't move to the next step
+            }
+
+            view.hideLoanError();
             step = 4;
             view.renderStep3();
             return;
@@ -75,16 +124,18 @@ function next() {
             const { additionalInfo } = view.getStep4Data();
 
             if (!additionalInfo || additionalInfo.trim().length < 10) {
+                view.showAdditionalInfoError("Minimum 10 characters required!");
                 throw new Error("Minimum 10 characters required!");
             }
 
+            view.hideAdditionalInfoError();
             step = 5;
             renderSummary();
             return;
         }
 
     } catch (e) {
-        view.showError(e.message);
+        // Error is handled by specific error display methods above
     }
 }
 

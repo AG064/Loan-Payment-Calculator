@@ -52,6 +52,8 @@ export class View {
             label.append(input, opt.label);
             this.app.appendChild(label);
         });
+
+        this.updateNextButtonState();
     }
 
     renderStep2(state) {
@@ -73,6 +75,12 @@ export class View {
 
             income.appendChild(option);
         });
+
+        // loan amount error
+        const loanError = document.createElement("div");
+        loanError.id = "loan-error";
+        loanError.className = "error-message";
+        loanError.hidden = true;
 
         // loan amount
         const loan = document.createElement("input");
@@ -122,7 +130,7 @@ export class View {
 
         payment.append(text, span, euro);
 
-        this.app.append(title, income, loan, period, rate, payment);
+        this.app.append(title, income, loanError, loan, period, rate, payment);
     }
 
     renderTermsPrivacy() {
@@ -157,6 +165,11 @@ Donec sit amet interdum nibh. Quisque viverra, erat sed tempor convallis, sem el
 Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet semper risus nisi sed libero. Curabitur aliquet quam lacus, quis porta orci finibus sit amet. Praesent ac congue purus, quis tempor nulla. Phasellus in viverra felis. Ut consectetur nibh quis lectus molestie, quis bibendum neque condimentum. Praesent sed erat a libero dapibus maximus vel in nibh. Morbi accumsan ultricies odio id gravida. Donec eget purus finibus lectus laoreet molestie.</p> 
         `;
 
+        const consentsError = document.createElement("div");
+        consentsError.id = "consents-error";
+        consentsError.className = "error-message";
+        consentsError.hidden = true;
+
         const checkboxLabel = document.createElement("label");
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
@@ -164,26 +177,109 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         checkboxLabel.append(checkbox, " I accept Terms & Privacy");
 
         const checkboxLabelEmail = document.createElement("label");
+        checkboxLabelEmail.id = "email-label"
+
+        const emailError = document.createElement("div");
+        emailError.id = "email-error";
+        emailError.className = "error-message";
+        emailError.hidden = true;
+
+        const emailField = document.createElement("input")
+        emailField.type = "string";
+        emailField.id = "email-notifiations";
+        emailField.placeholder = "Email";
+        emailField.hidden = true;
+
         const checkboxEmail = document.createElement("input");
         checkboxEmail.type = "checkbox";
         checkboxEmail.id = "recive-offers";
         checkboxLabelEmail.append(checkboxEmail, "I agree to receive offers (optional)");
 
-        this.app.append(title, textBox, checkboxLabel, checkboxLabelEmail);
+        this.app.append(title, textBox, consentsError, checkboxLabel, checkboxLabelEmail, emailError, emailField);
     }
 
-    renderEmailField(state) {
-        const emailField = document.createElement("input")
-
-        emailField.type = "string";
-        emailField.id = "email-notifiations";
-        emailField.placeholder = "Email";
-        emailField.value = state?._userEmail ?? "";
+    renderEmailField() {
+        const checkbox = document.querySelector("#recive-offers");
+        const input = document.querySelector("#email-notifiations");
+        if (checkbox.checked) {
+            input.hidden = false;
+        } else {
+            input.hidden = true;
+        }
     }
 
-    removeOverlay() {
-        // No longer needed - terms is now a regular step
+    showEmailError(message) {
+        const errorDiv = this.app.querySelector("#email-error");
+        if (errorDiv) {
+            errorDiv.textContent = message;
+            errorDiv.hidden = false;
+        }
     }
+
+    hideEmailError() {
+        const errorDiv = this.app.querySelector("#email-error");
+        if (errorDiv) {
+            errorDiv.hidden = true;
+            errorDiv.textContent = "";
+        }
+    }
+
+    showConsentsError(message) {
+        const errorDiv = this.app.querySelector("#consents-error");
+        if (errorDiv) {
+            errorDiv.textContent = message;
+            errorDiv.hidden = false;
+        }
+    }
+
+    hideConsentsError() {
+        const errorDiv = this.app.querySelector("#consents-error");
+        if (errorDiv) {
+            errorDiv.hidden = true;
+            errorDiv.textContent = "";
+        }
+    }
+
+    showAdditionalInfoError(message) {
+        const errorDiv = this.app.querySelector("#additional-info-error");
+        if (errorDiv) {
+            errorDiv.textContent = message;
+            errorDiv.hidden = false;
+        }
+    }
+
+    hideAdditionalInfoError() {
+        const errorDiv = this.app.querySelector("#additional-info-error");
+        if (errorDiv) {
+            errorDiv.hidden = true;
+            errorDiv.textContent = "";
+        }
+    }
+
+    showLoanError(message) {
+        const errorDiv = this.app.querySelector("#loan-error");
+        if (errorDiv) {
+            errorDiv.textContent = message;
+            errorDiv.hidden = false;
+        }
+    }
+
+    hideLoanError() {
+        const errorDiv = this.app.querySelector("#loan-error");
+        if (errorDiv) {
+            errorDiv.hidden = true;
+            errorDiv.textContent = "";
+        }
+    }
+
+    updateNextButtonState() {
+        const nextBtn = document.querySelector("#next");
+        if (!nextBtn) return;
+
+        const employment = document.querySelector("input[name='employment']:checked");
+        nextBtn.disabled = !employment;
+    }
+
 
     allowAccept(back = false) {
         const checkbox = document.querySelector("#accept-checkbox");
@@ -199,10 +295,15 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         const title = document.createElement("h2");
         title.textContent = "Additional info";
 
+        const additionalInfoError = document.createElement("div");
+        additionalInfoError.id = "additional-info-error";
+        additionalInfoError.className = "error-message";
+        additionalInfoError.hidden = true;
+
         const textarea = document.createElement("textarea");
         textarea.id = "additionalInfo";
 
-        this.app.append(title, textarea);
+        this.app.append(title, additionalInfoError, textarea);
     }
 
     renderSummary(state, payment) {
@@ -234,6 +335,8 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         btn.id = "back-to-intro";
         btn.textContent = "Back To Intro";
 
+
+
         this.app.append(title, list, btn);
     }
 
@@ -263,14 +366,19 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         };
     }
 
+    getEmailData() {
+        const emailInput = document.querySelector("#email-notifiations");
+        return emailInput?.value || null;
+    }
+
+    getEmail() {
+        return {
+            email: document.querySelector("#email-notifiations")?.value
+        }
+    }
     
     updatePayment(value) {
         const el = document.querySelector("#monthlyPayment");
         if (el) el.textContent = value.toFixed(2);
-    }
-
-    
-    showError(msg) {
-        alert(msg);
     }
 }
