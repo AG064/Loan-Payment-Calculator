@@ -1,8 +1,14 @@
+import { calculateMonthlyPayment} from "./calculator.js";
 export class View {
     app = document.querySelector("#app");
 
     clear() {
         this.app.innerHTML = "";
+
+        this.app.classList.remove("fade-in");
+        // trigger reflow to restart animation
+        void this.app.offsetWidth;
+        this.app.classList.add("fade-in");
     }
 
     renderIntro() {
@@ -128,8 +134,14 @@ export class View {
 
         const span = document.createElement("span");
         span.id = "monthlyPayment";
-        span.textContent = "0";
-
+        
+        const initialPayment = calculateMonthlyPayment(
+            state?._loanAmount,
+            state?._interestRate,
+            state?._loanPeriod
+        );
+        
+        span.textContent = initialPayment ? initialPayment.toFixed(2) : "0.00";
         const euro = document.createTextNode(" €");
 
         payment.append(text, span, euro);
@@ -151,7 +163,7 @@ export class View {
         textBox.className = "terms-text";
 
         textBox.innerHTML = `
-            <p>Welcome to Swedbank loan service.</p>
+            <p>Welcome to OrangeBank loan service.</p>
 
             <p>By continuing, you agree that:</p>
             <ul>

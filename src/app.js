@@ -1,5 +1,6 @@
 import { State } from "./state.js";
 import { View } from "./view.js";
+import { calculateMonthlyPayment } from "./calculator.js";
 
 const state = new State();
 const view = new View();
@@ -160,15 +161,4 @@ function renderSummary() {
     );
 
     view.renderSummary(state, payment);
-}
-
-// calculator function
-function calculateMonthlyPayment(amount, rate, months) {
-    const monthlyRate = rate / 100 / 12;
-
-    return (
-        amount *
-        (monthlyRate * Math.pow(1 + monthlyRate, months)) /
-        (Math.pow(1 + monthlyRate, months) - 1)
-    );
 }

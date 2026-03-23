@@ -214,3 +214,13 @@ textarea.form-control {
   min-height: 120px;
   font-family: inherit;
 }
+
+/* fade-in animation for step transitions */
+.fade-in {
+  animation: fadeInStep 0.25s ease-in-out;
+}
+
+@keyframes fadeInStep {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
