@@ -1,14 +1,19 @@
+import { calculateMonthlyPayment} from "./calculator.js";
 export class View {
     app = document.querySelector("#app");
 
     clear() {
         this.app.innerHTML = "";
+
+        this.app.classList.remove("fade-in");
+        // trigger reflow to restart animation
+        void this.app.offsetWidth;
+        this.app.classList.add("fade-in");
     }
 
     renderIntro() {
         this.clear();
-        document.querySelector(".navigation").setAttribute("hidden", true);
-        
+        document.querySelector("#nav-container").classList.add("hidden");
 
         const title = document.createElement("h2");
         title.textContent = "Welcome to OrangeBank";
@@ -23,8 +28,8 @@ export class View {
 
     renderStep1(state) {
         this.clear();
-
-        document.querySelector(".navigation").removeAttribute("hidden");
+        document.querySelector("#next").disabled = false;
+        document.querySelector("#nav-container").classList.remove("hidden");
 
         const title = document.createElement("h2");
         title.textContent = "Employment status";
@@ -37,21 +42,27 @@ export class View {
 
         this.app.appendChild(title);
 
-        options.forEach(opt => {
+        options.forEach((opt, index) => {
             const label = document.createElement("label");
             label.htmlFor = opt.id;
+            label.className = "radio-label";
 
+            label.setAttribute("for", "emp-" + index);
             const input = document.createElement("input");
             input.type = "radio";
             input.id = opt.id;
             input.name = "employment";
+            input.id = "emp-" + index;
             input.value = opt.value;
 
             if (state?._employmentStatus === opt.value) {
                 input.checked = true;
             }
 
-            label.append(input, " " + opt.label);
+            const customCircle = document.createElement("span");
+            customCircle.className = "radio-custom";
+
+            label.append(input, customCircle, opt.label);
             this.app.appendChild(label);
         });
 
@@ -60,6 +71,8 @@ export class View {
 
     renderStep2(state) {
         this.clear();
+        document.querySelector("#next").disabled = false;
+        document.querySelector("#nav-container").classList.remove("hidden");
 
         const title = document.createElement("h2");
         title.textContent = "Loan details";
@@ -72,6 +85,7 @@ export class View {
         // income
         const income = document.createElement("select");
         income.id = "income";
+        income.className = "form-control";
 
         ["<1000€", "1000–2000€", ">2000€"].forEach(val => {
             const option = document.createElement("option");
@@ -96,6 +110,7 @@ export class View {
 
         // loan amount
         const loan = document.createElement("input");
+        loan.className = "form-control";
         loan.type = "number";
         loan.id = "loanAmount";
         loan.value = state?._loanAmount ?? "";
@@ -108,6 +123,8 @@ export class View {
         // period
         const period = document.createElement("select");
         period.id = "loanPeriod";
+        period.className = "form-control";
+
 
         [12, 24, 36].forEach(val => {
             const option = document.createElement("option");
@@ -127,6 +144,7 @@ export class View {
         // interest
         const rate = document.createElement("select");
         rate.id = "interestRate";
+        rate.className = "form-control";
 
         [5, 10, 15].forEach(val => {
             const option = document.createElement("option");
@@ -145,8 +163,14 @@ export class View {
 
         const span = document.createElement("span");
         span.id = "monthlyPayment";
-        span.textContent = "0";
-
+        
+        const initialPayment = calculateMonthlyPayment(
+            state?._loanAmount,
+            state?._interestRate,
+            state?._loanPeriod
+        );
+        
+        span.textContent = initialPayment ? initialPayment.toFixed(2) : "0.00";
         const euro = document.createTextNode(" €");
 
         payment.append(text, span, euro);
@@ -156,6 +180,7 @@ export class View {
 
     renderStep3TermsPrivacy() {
         this.clear();
+        document.querySelector("#nav-container").classList.remove("hidden");
 
         const title = document.createElement("h2");
         title.textContent = "Terms & Privacy";
@@ -167,7 +192,7 @@ export class View {
         textBox.className = "terms-text";
 
         textBox.innerHTML = `
-            <p>Welcome to Swedbank loan service.</p>
+            <p>Welcome to OrangeBank loan service.</p>
 
             <p>By continuing, you agree that:</p>
             <ul>
@@ -192,7 +217,7 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         consentsError.hidden = true;
 
         const checkboxLabel = document.createElement("label");
-        checkboxLabel.htmlFor = "accept-checkbox";
+        checkboxLabel.className = "checkbox-label";
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.id = "accept-checkbox";
@@ -217,6 +242,7 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         emailField.placeholder = "Email";
         emailField.hidden = true;
 
+        checkboxLabelEmail.className = "checkbox-label";
         const checkboxEmail = document.createElement("input");
         checkboxEmail.type = "checkbox";
         checkboxEmail.id = "receive-offers";
@@ -321,7 +347,8 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
 
     renderStep4AdditionalInfo() {
         this.clear();
-
+        document.querySelector("#nav-container").classList.remove("hidden");
+        document.querySelector("#next").disabled = false;
         const title = document.createElement("h2");
         title.textContent = "Additional info";
 
@@ -336,14 +363,15 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
 
         const textarea = document.createElement("textarea");
         textarea.id = "additionalInfo";
-        textarea.placeholder = "Please provide additional information...";
+        textarea.className = "form-control";
+        textarea.placeholder = "Anything else you want to add?";
 
         this.app.append(title, additionalInfoError, textareaLabel, textarea);
     }
 
     renderSummary(state, payment) {
         this.clear();
-        document.querySelector(".navigation").setAttribute("hidden", true);
+        document.querySelector("#nav-container").classList.add("hidden");
 
         const title = document.createElement("h2");
         title.textContent = "Summary";
@@ -415,5 +443,14 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
     updatePayment(value) {
         const el = document.querySelector("#monthlyPayment");
         if (el) el.textContent = value.toFixed(2);
+    }
+
+    clearError() {
+        // Clear all error messages
+        const errors = this.app.querySelectorAll(".error-message");
+        errors.forEach(error => {
+            error.hidden = true;
+            error.textContent = "";
+        });
     }
 }

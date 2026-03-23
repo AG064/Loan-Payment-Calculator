@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Swedbank</title>
+    <title>OrangeBank</title>
     <link rel="stylesheet" href="style/style.css">
 </head>
 <body>
     <div class="wizard-card">
         <h1 class="orange-text">Loan Payment Calculator</h1>
-
+        
         <div id="app"></div>
-
-        <!-- Navigation -->
-        <div class="navigation" hidden>
-            <button class="btn" id="back">Back</button>
-            <button class="btn" id="next">Next</button>
+        
+        <div class="navigation hidden" id="nav-container">
+            <button id="back" class="btn">Back</button>
+            <button id="next" class="btn">Next</button>
         </div>
     </div>
 
-    <script src="src/app.js" type="module"></script>
+    <script defer src="src/app.js" type="module"></script>
 </body>
 </html>

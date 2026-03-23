@@ -1,5 +1,6 @@
 import { State } from "./state.js";
 import { View } from "./view.js";
+import { calculateMonthlyPayment } from "./calculator.js";
 
 const state = new State();
 const view = new View();
@@ -15,8 +16,9 @@ function init() {
     document.addEventListener("input", handleInput);
 }
 
-// 🔹 events
+// events
 function handleClick(e) {
+    view.clearError(); // so that error is cleared when user tries to interact again, not only when going back or forward
     if (e.target.id === "start") startFlow();
     if (e.target.id === "next") next();
     if (e.target.id === "back") back();
@@ -30,6 +32,7 @@ function handleClick(e) {
         view.allowAccept(true);
     }
     if (e.target.id === "back-to-intro") {
+        step = 0;
         view.renderIntro();
     }
     if (e.target.name === "employment") {
@@ -37,15 +40,16 @@ function handleClick(e) {
     }
 }
 
-// 🔹 старт → step1
+// start -> step1 -> overlay
 function startFlow() {
     step = 1;
 
     view.renderStep1(state);
 }
 
-// 🔹 next
+// next button
 function next() {
+    view.clearError();
     try {
         
 
@@ -82,7 +86,6 @@ function next() {
         // step3 (terms) → step4 (textarea)
         if (step === 3) {
             const { consents } = view.getStep3Data();
-
             if (!consents.length) {
                 view.showConsentsError("Accept at least one consent!");
                 throw new Error("Accept at least one consent!");
@@ -117,7 +120,7 @@ function next() {
             return;
         }
 
-        // step4 (textarea) → summary
+        // step4 (textarea) -> summary
         if (step === 4) {
             const { additionalInfo } = view.getStep4Data();
 
@@ -137,9 +140,11 @@ function next() {
     }
 }
 
-// 🔹 back
+// back button
 function back() {
-    if (step === 0) return;
+    view.clearError();
+
+    if (step === 0 || step === 1) return;
 
     if (step === 4) {
         step = 3;
@@ -165,7 +170,7 @@ function back() {
     }
 }
 
-// 🔹 сбор данных
+// data collection from steps
 function collectData() {
     if (step === 1) {
         const { employmentStatus } = view.getStep1Data();
@@ -182,8 +187,9 @@ function collectData() {
     }
 }
 
-// 🔹 live калькулятор
+// live calculator
 function handleInput() {
+    if (step !== 2) return;
     if (step !== 2) return;
 
     try {
@@ -201,7 +207,7 @@ function handleInput() {
     } catch {}
 }
 
-// 🔹 summary
+// summary
 function renderSummary() {
     const payment = calculateMonthlyPayment(
         state.loanAmount,
@@ -210,15 +216,4 @@ function renderSummary() {
     );
 
     view.renderSummary(state, payment);
-}
-
-// 🔹 калькулятор
-function calculateMonthlyPayment(amount, rate, months) {
-    const monthlyRate = rate / 100 / 12;
-
-    return (
-        amount *
-        (monthlyRate * Math.pow(1 + monthlyRate, months)) /
-        (Math.pow(1 + monthlyRate, months) - 1)
-    );
 }
