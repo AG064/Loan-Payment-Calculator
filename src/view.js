@@ -30,18 +30,20 @@ export class View {
         title.textContent = "Employment status";
 
         const options = [
-            { value: "employed", label: "Employed" },
-            { value: "self-employed", label: "Self-employed" },
-            { value: "unemployed", label: "Unemployed" }
+            { value: "employed", label: "Employed", id: "employment-employed" },
+            { value: "self-employed", label: "Self-employed", id: "employment-self-employed" },
+            { value: "unemployed", label: "Unemployed", id: "employment-unemployed" }
         ];
 
         this.app.appendChild(title);
 
         options.forEach(opt => {
             const label = document.createElement("label");
+            label.htmlFor = opt.id;
 
             const input = document.createElement("input");
             input.type = "radio";
+            input.id = opt.id;
             input.name = "employment";
             input.value = opt.value;
 
@@ -49,7 +51,7 @@ export class View {
                 input.checked = true;
             }
 
-            label.append(input, opt.label);
+            label.append(input, " " + opt.label);
             this.app.appendChild(label);
         });
 
@@ -62,6 +64,11 @@ export class View {
         const title = document.createElement("h2");
         title.textContent = "Loan details";
 
+        // income label
+        const incomeLabel = document.createElement("label");
+        incomeLabel.htmlFor = "income";
+        incomeLabel.textContent = "Income";
+
         // income
         const income = document.createElement("select");
         income.id = "income";
@@ -71,7 +78,7 @@ export class View {
             option.value = val;
             option.textContent = val;
 
-            if (state?._income == val) option.selected = true;
+            if (state?._income === val) option.selected = true;
 
             income.appendChild(option);
         });
@@ -82,12 +89,21 @@ export class View {
         loanError.className = "error-message";
         loanError.hidden = true;
 
+        // loan amount label
+        const loanLabel = document.createElement("label");
+        loanLabel.htmlFor = "loanAmount";
+        loanLabel.textContent = "Loan Amount";
+
         // loan amount
         const loan = document.createElement("input");
         loan.type = "number";
         loan.id = "loanAmount";
-        loan.placeholder = "Loan amount";
         loan.value = state?._loanAmount ?? "";
+
+        // period label
+        const periodLabel = document.createElement("label");
+        periodLabel.htmlFor = "loanPeriod";
+        periodLabel.textContent = "Loan Period";
 
         // period
         const period = document.createElement("select");
@@ -98,10 +114,15 @@ export class View {
             option.value = val;
             option.textContent = val + " months";
 
-            if (state?._loanPeriod == val) option.selected = true;
+            if (state?._loanPeriod === val) option.selected = true;
 
             period.appendChild(option);
         });
+
+        // interest label
+        const rateLabel = document.createElement("label");
+        rateLabel.htmlFor = "interestRate";
+        rateLabel.textContent = "Interest Rate";
 
         // interest
         const rate = document.createElement("select");
@@ -112,7 +133,7 @@ export class View {
             option.value = val;
             option.textContent = val + "%";
 
-            if (state?._interestRate == val) option.selected = true;
+            if (state?._interestRate === val) option.selected = true;
 
             rate.appendChild(option);
         });
@@ -130,17 +151,17 @@ export class View {
 
         payment.append(text, span, euro);
 
-        this.app.append(title, income, loanError, loan, period, rate, payment);
+        this.app.append(title, incomeLabel, income, loanError, loanLabel, loan, periodLabel, period, rateLabel, rate, payment);
     }
 
-    renderTermsPrivacy() {
+    renderStep3TermsPrivacy() {
         this.clear();
 
         const title = document.createElement("h2");
         title.textContent = "Terms & Privacy";
 
         const nextBtn = document.querySelector("#next");
-        nextBtn.disabled = true;
+        if (nextBtn) nextBtn.disabled = true;
 
         const textBox = document.createElement("div");
         textBox.className = "terms-text";
@@ -171,36 +192,42 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         consentsError.hidden = true;
 
         const checkboxLabel = document.createElement("label");
+        checkboxLabel.htmlFor = "accept-checkbox";
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.id = "accept-checkbox";
         checkboxLabel.append(checkbox, " I accept Terms & Privacy");
 
         const checkboxLabelEmail = document.createElement("label");
-        checkboxLabelEmail.id = "email-label"
+        checkboxLabelEmail.htmlFor = "receive-offers";
 
         const emailError = document.createElement("div");
         emailError.id = "email-error";
         emailError.className = "error-message";
         emailError.hidden = true;
 
+        const emailLabel = document.createElement("label");
+        emailLabel.htmlFor = "email-notifications";
+        emailLabel.textContent = "Email Address";
+        emailLabel.hidden = true;
+
         const emailField = document.createElement("input")
-        emailField.type = "string";
-        emailField.id = "email-notifiations";
+        emailField.type = "email";
+        emailField.id = "email-notifications";
         emailField.placeholder = "Email";
         emailField.hidden = true;
 
         const checkboxEmail = document.createElement("input");
         checkboxEmail.type = "checkbox";
-        checkboxEmail.id = "recive-offers";
+        checkboxEmail.id = "receive-offers";
         checkboxLabelEmail.append(checkboxEmail, "I agree to receive offers (optional)");
 
-        this.app.append(title, textBox, consentsError, checkboxLabel, checkboxLabelEmail, emailError, emailField);
+        this.app.append(title, textBox, consentsError, checkboxLabel, checkboxLabelEmail, emailError, emailLabel, emailField);
     }
 
     renderEmailField() {
-        const checkbox = document.querySelector("#recive-offers");
-        const input = document.querySelector("#email-notifiations");
+        const checkbox = document.querySelector("#receive-offers");
+        const input = document.querySelector("#email-notifications");
         if (checkbox.checked) {
             input.hidden = false;
         } else {
@@ -284,12 +311,15 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
     allowAccept(back = false) {
         const checkbox = document.querySelector("#accept-checkbox");
         const nextBtn = document.querySelector("#next");
-        if (back) nextBtn.disabled = false;
+        if (back) {
+            nextBtn.disabled = false;
+            return;
+        }
         nextBtn.disabled = !checkbox.checked;
     }
 
 
-    renderStep3() {
+    renderStep4AdditionalInfo() {
         this.clear();
 
         const title = document.createElement("h2");
@@ -300,10 +330,15 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         additionalInfoError.className = "error-message";
         additionalInfoError.hidden = true;
 
+        const textareaLabel = document.createElement("label");
+        textareaLabel.htmlFor = "additionalInfo";
+        textareaLabel.textContent = "Additional Information (minimum 10 characters)";
+
         const textarea = document.createElement("textarea");
         textarea.id = "additionalInfo";
+        textarea.placeholder = "Please provide additional information...";
 
-        this.app.append(title, additionalInfoError, textarea);
+        this.app.append(title, additionalInfoError, textareaLabel, textarea);
     }
 
     renderSummary(state, payment) {
@@ -330,7 +365,7 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
             list.appendChild(p);
         });
 
-        const btn = document.createElement("btn");
+        const btn = document.createElement("button");
         btn.className = "btn";
         btn.id = "back-to-intro";
         btn.textContent = "Back To Intro";
@@ -367,13 +402,13 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
     }
 
     getEmailData() {
-        const emailInput = document.querySelector("#email-notifiations");
+        const emailInput = document.querySelector("#email-notifications");
         return emailInput?.value || null;
     }
 
     getEmail() {
         return {
-            email: document.querySelector("#email-notifiations")?.value
+            email: document.querySelector("#email-notifications")?.value
         }
     }
     

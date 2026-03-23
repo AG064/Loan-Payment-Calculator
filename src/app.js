@@ -23,14 +23,14 @@ function handleClick(e) {
     if (e.target.id === "accept-checkbox") {
         view.allowAccept();
     }
+    if (e.target.id === "receive-offers") {
+        view.renderEmailField();
+    }
     if (e.target.id === "back") {
-        view.allowAccept(true)
+        view.allowAccept(true);
     }
     if (e.target.id === "back-to-intro") {
         view.renderIntro();
-    }
-    if (e.target.id === "recive-offers") {
-        view.renderEmailField(state);
     }
     if (e.target.name === "employment") {
         view.updateNextButtonState();
@@ -49,16 +49,38 @@ function next() {
     try {
         
 
-        // step1 → step2 (terms)
+        // step1 → step2 (loan details)
         if (step === 1) {
             collectData();
             step = 2;
-            view.renderTermsPrivacy();
+            view.renderStep2(state);
             return;
         }
 
-        // step2 (terms) → step3 (loan details)
+        // step2 (loan) → step3 (terms)
         if (step === 2) {
+            // 1. Check for empty fields first
+            // if (!data.loanAmount || !data.interestRate || !data.loanPeriod) {
+            //     view.showLoanError("Loan amount required!");
+            //     throw new Error("All loan fields are required!");
+            // }
+
+            // 2. Try updating the state, and catch any validation errors (like negative numbers)
+            try {
+                collectData();
+            } catch (e) {
+                view.showLoanError(e.message);
+                throw e; // Stop execution so it doesn't move to the next step
+            }
+
+            view.hideLoanError();
+            step = 3;
+            view.renderStep3TermsPrivacy();
+            return;
+        }
+
+        // step3 (terms) → step4 (textarea)
+        if (step === 3) {
             const { consents } = view.getStep3Data();
 
             if (!consents.length) {
@@ -69,7 +91,7 @@ function next() {
             view.hideConsentsError();
 
             // Check email if checkbox is checked
-            const emailCheckbox = document.querySelector("#recive-offers");
+            const emailCheckbox = document.querySelector("#receive-offers");
             if (emailCheckbox.checked) {
                 const email = view.getEmailData();
                 
@@ -90,32 +112,8 @@ function next() {
                 view.hideEmailError();
             }
 
-            step = 3;
-            view.renderStep2(state);
-            return;
-        }
-
-        // step3 (loan) → step4 (textarea)
-        if (step === 3) {
-            const data = view.getStep2Data();
-
-            // 1. Check for empty fields first
-            // if (!data.loanAmount || !data.interestRate || !data.loanPeriod) {
-            //     view.showLoanError("Loan amount required!");
-            //     throw new Error("All loan fields are required!");
-            // }
-
-            // 2. Try updating the state, and catch any validation errors (like negative numbers)
-            try {
-                collectData();
-            } catch (e) {
-                view.showLoanError(e.message);
-                throw e; // Stop execution so it doesn't move to the next step
-            }
-
-            view.hideLoanError();
             step = 4;
-            view.renderStep3();
+            view.renderStep4AdditionalInfo();
             return;
         }
 
@@ -145,13 +143,13 @@ function back() {
 
     if (step === 4) {
         step = 3;
-        view.renderStep2(state);
+        view.renderStep3TermsPrivacy();
         return;
     }
 
     if (step === 3) {
         step = 2;
-        view.renderTermsPrivacy();
+        view.renderStep2(state);
         return;
     }
 
@@ -174,7 +172,7 @@ function collectData() {
         state.employmentStatus = employmentStatus;
     }
 
-    if (step === 3) {
+    if (step === 2) {
         const data = view.getStep2Data();
 
         state.income = data.income;
@@ -186,7 +184,7 @@ function collectData() {
 
 // 🔹 live калькулятор
 function handleInput() {
-    if (step !== 3) return;
+    if (step !== 2) return;
 
     try {
         const data = view.getStep2Data();
