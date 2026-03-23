@@ -138,7 +138,7 @@ export class View {
         const title = document.createElement("h2");
         title.textContent = "Terms & Privacy";
 
-        // 🔹 текстовый блок
+        //text
         const textBox = document.createElement("div");
         textBox.className = "terms-text";
 
@@ -161,7 +161,7 @@ Donec sit amet interdum nibh. Quisque viverra, erat sed tempor convallis, sem el
 
 Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet semper risus nisi sed libero. Curabitur aliquet quam lacus, quis porta orci finibus sit amet. Praesent ac congue purus, quis tempor nulla. Phasellus in viverra felis. Ut consectetur nibh quis lectus molestie, quis bibendum neque condimentum. Praesent sed erat a libero dapibus maximus vel in nibh. Morbi accumsan ultricies odio id gravida. Donec eget purus finibus lectus laoreet molestie.</p> 
         `;
-        // 🔹 чекбокс (как в банках)
+        // checkbox "I accept Terms & Privacy"
         const checkboxLabel = document.createElement("label");
 
         const checkbox = document.createElement("input");
@@ -169,6 +169,15 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         checkbox.id = "accept-checkbox";
 
         checkboxLabel.append(checkbox, " I accept Terms & Privacy");
+
+        // checkbox "I agree to receive offers (optional)"
+        const checkboxLabelEmail = document.createElement("label");
+
+        const checkboxEmail = document.createElement("input");
+        checkboxEmail.type = "checkbox";
+        checkboxEmail.id = "recive-offers";
+
+        checkboxLabelEmail.append(checkboxEmail, "I agree to receive offers (optional)")
 
         // 🔹 кнопки
         const actions = document.createElement("div");
@@ -188,7 +197,7 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         actions.append(accept, decline);
 
         // 🔹 сборка
-        box.append(title, textBox, checkboxLabel, actions);
+        box.append(title, textBox, checkboxLabel, checkboxLabelEmail, actions);
         overlay.appendChild(box);
 
         document.body.appendChild(overlay);
@@ -223,6 +232,7 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
 
     renderSummary(state, payment) {
         this.clear();
+        document.querySelector(".navigation").setAttribute("hidden", true);
 
         const title = document.createElement("h2");
         title.textContent = "Summary";
@@ -244,7 +254,12 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
             list.appendChild(p);
         });
 
-        this.app.append(title, list);
+        const btn = document.createElement("btn");
+        btn.className = "btn";
+        btn.id = "back-to-intro";
+        btn.textContent = "Back To Intro";
+
+        this.app.append(title, list, btn);
     }
 
     getStep1Data() {

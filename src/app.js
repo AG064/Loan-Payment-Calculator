@@ -31,6 +31,9 @@ function handleClick(e) {
         view.renderIntro();
         view.removeOverlay();
     }
+    if (e.target.id === "back-to-intro") {
+        view.renderIntro();
+    }
 }
 
 // 🔹 старт → step1 + overlay
@@ -39,8 +42,7 @@ function startFlow() {
 
     view.renderStep1(state);
 
-    // 🔥 сразу показываем terms поверх
-    view.renderTermsPrivacy();
+    
 }
 
 // 🔹 next
@@ -66,13 +68,16 @@ function next() {
         if (step === 1) {
             step = 2;
             view.renderStep2(state);
+            
             return;
         }
 
         // step2 → step4 (textarea)
         if (step === 2) {
+            
             step = 3;
             view.renderStep3();
+            view.renderTermsPrivacy();
             return;
         }
 
@@ -80,7 +85,7 @@ function next() {
         if (step === 3) {
             const { additionalInfo } = view.getStep4Data();
 
-            if (!additionalInfo || additionalInfo.length < 10) {
+            if (!additionalInfo || additionalInfo.trim().length < 10) {
                 throw new Error("Minimum 10 characters required!");
             }
 
