@@ -7,8 +7,7 @@ export class View {
 
     renderIntro() {
         this.clear();
-        document.querySelector(".navigation").setAttribute("hidden", true);
-        
+        document.querySelector("#nav-container").classList.add("hidden");
 
         const title = document.createElement("h2");
         title.textContent = "Welcome to OrangeBank";
@@ -24,7 +23,7 @@ export class View {
     renderStep1(state) {
         this.clear();
         document.querySelector("#next").disabled = false;
-        document.querySelector(".navigation").removeAttribute("hidden");
+        document.querySelector("#nav-container").classList.remove("hidden");
 
         const title = document.createElement("h2");
         title.textContent = "Employment status";
@@ -37,20 +36,25 @@ export class View {
 
         this.app.appendChild(title);
 
-        options.forEach(opt => {
+        options.forEach((opt, index) => {
             const label = document.createElement("label");
             label.className = "radio-label";
 
+            label.setAttribute("for", "emp-" + index);
             const input = document.createElement("input");
             input.type = "radio";
             input.name = "employment";
+            input.id = "emp-" + index;
             input.value = opt.value;
 
             if (state?._employmentStatus === opt.value) {
                 input.checked = true;
             }
 
-            label.append(input, opt.label);
+            const customCircle = document.createElement("span");
+            customCircle.className = "radio-custom";
+
+            label.append(input, customCircle, opt.label);
             this.app.appendChild(label);
         });
     }
@@ -58,6 +62,8 @@ export class View {
     renderStep2(state) {
         this.clear();
         document.querySelector("#next").disabled = false;
+        document.querySelector("#nav-container").classList.remove("hidden");
+
         const title = document.createElement("h2");
         title.textContent = "Loan details";
 
@@ -133,6 +139,7 @@ export class View {
 
     renderStep3() {
         this.clear();
+        document.querySelector("#nav-container").classList.remove("hidden");
 
         const title = document.createElement("h2");
         title.textContent = "Terms & Privacy";
@@ -189,10 +196,6 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         emailField.value = state?._userEmail ?? "";
     }
 
-    removeOverlay() {
-        // No longer needed - terms is now a regular step
-    }
-
     allowAccept() {
         const checkbox = document.querySelector("#accept-checkbox");
         const nextBtn = document.querySelector("#next");
@@ -204,6 +207,7 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
 
     renderStep4() {
         this.clear();
+        document.querySelector("#nav-container").classList.remove("hidden");
         document.querySelector("#next").disabled = false;
         const title = document.createElement("h2");
         title.textContent = "Additional info";
@@ -218,7 +222,7 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
 
     renderSummary(state, payment) {
         this.clear();
-        document.querySelector(".navigation").setAttribute("hidden", true);
+        document.querySelector("#nav-container").classList.add("hidden");
 
         const title = document.createElement("h2");
         title.textContent = "Summary";

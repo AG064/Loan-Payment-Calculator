@@ -145,17 +145,68 @@ h1, h2, h3, h4 {
 }
 
 
+/* custom radio button styling */
 .radio-label {
-  display: block;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 35px;
   margin-bottom: 15px;
-  font-size: 16px;
   cursor: pointer;
+  font-size: 16px;
+  user-select: none;
 }
 
-.radio-label input {
-  margin-right: 10px;
-  transform: scale(1.2);
-  accent-color: #fb4f00; 
+/* gets rid of default radio button */
+.radio-label input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* draws the custom circle */
+.radio-custom {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  height: 22px;
+  width: 22px;
+  background-color: #ffffff;
+  border: 2px solid #cccccc;
+  border-radius: 50%;
+  transition: all 0.2s ease-in-out;
+}
+
+
+.radio-label:hover input ~ .radio-custom {
+  border-color: #fb4f00;
+}
+
+
+.radio-label input:checked ~ .radio-custom {
+  border-color: #fb4f00;
+}
+
+
+.radio-custom::after {
+  content: "";
+  position: absolute;
+  display: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #fb4f00;
+}
+
+
+.radio-label input:checked ~ .radio-custom::after {
+  display: block;
 }
 
 /* error message styling */
