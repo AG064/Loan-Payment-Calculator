@@ -31,4 +31,4 @@ To run the application properly:
 
 ## Team
 
-Developed collaboratively by Aleksey Aleksandrovich and Vladimir Nilov. The workload was distributed between core state/validation logic and UI/DOM manipulation, with mutual code reviews and joint integration of the final application flow.
+Developed collaboratively by Aleksey Aleksandrovich and Vladimir Nilov.
