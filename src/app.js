@@ -140,7 +140,13 @@ function next() {
 function back() {
     view.clearError();
 
-    if (step === 0 || step === 1) return;
+    if (step === 0) return;
+
+    if (step === 1) {
+        step = 0;
+        view.renderIntro();
+        return;
+    }
 
     try {
         collectData();

@@ -24,7 +24,7 @@ Because the application relies on modern ES6 Modules (`import` / `export` in `<s
 To run the application properly:
 1. Extract the ZIP archive.
 2. Serve the root directory using any local web server. Examples:
-   * **VS Code:** Right-click `index.html` and select *Open with Live Server*.
+   * **VS Code:** Right-click `index.html` and select *Open with Live Server*. (Live Server plugin)
    * **Node.js:** Run `npx http-server` in the terminal.
    * **Python:** Run `python3 -m http.server` or `python -m SimpleHTTPServer`.
 3. Open the provided `localhost` URL in a modern browser.
