@@ -4,24 +4,6 @@ export class State {
     _loanAmount = null;
     _loanPeriod = null;
     _interestRate = null;
-    _userEmail = null;
-
-    get userEmail() {
-        return this._userEmail;
-    }
-
-    set userEmail(value) {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (
-            value == null ||
-            typeof value !== "string" ||
-            !regex.test(value)
-        ) {
-            throw new Error("Invalid email format!");
-        }
-
-        this._userEmail = value;
-    }
 
     // employmentStatus
     get employmentStatus() {
@@ -36,7 +18,7 @@ export class State {
             typeof value !== "string" ||
             !allowed.includes(value)
         ) {
-            throw new Error("Please select your employment status!");
+            throw new Error("Invalid employment status!");
         }
 
         this._employmentStatus = value;
@@ -48,34 +30,27 @@ export class State {
     }
 
     set income(value) {
-        const allowed = ["<1000€", "1000–2000€", ">2000€"]
+        const num = Number(value);
 
-        if (!allowed.includes(value)) {
-            throw new Error("Please select your income range!");
+        if (value == null || Number.isNaN(num) || num <= 0) {
+            throw new Error("Income must be a positive number!");
         }
 
-        this._income = value;
+        this._income = num;
     }
 
     // loanAmount
     get loanAmount() {
-            return this._loanAmount;
-        }
+        return this._loanAmount;
+    }
 
     set loanAmount(value) {
-        if (value == null || value === "") {
-            throw new Error("Loan amount is required and cannot be empty!");
-        }
         const num = Number(value);
-        if (Number.isNaN(num)) {
-            throw new Error("Loan amount must be a valid number!");
-        }
-        if (num === 0) {
-            throw new Error("Loan amount cannot be 0");
-        }
-        if (num <= 0) {
+
+        if (value == null || Number.isNaN(num) || num <= 0) {
             throw new Error("Loan amount must be a positive number!");
         }
+
         this._loanAmount = num;
     }
 
@@ -89,11 +64,11 @@ export class State {
         const allowedMonths = [12, 24, 36];
 
         if (value == null || Number.isNaN(num) || num <= 0) {
-            throw new Error("Please enter a valid loan period!");
+            throw new Error("Loan period must be a positive number!");
         }
 
         if (!allowedMonths.includes(num)) {
-            throw new Error("Please select a valid loan period!");
+            throw new Error("Not allowed loan period!");
         }
 
         this._loanPeriod = num;
@@ -108,11 +83,11 @@ export class State {
         const num = Number(value);
 
         if (Number.isNaN(num)) {
-            throw new Error("Please enter a valid interest rate!");
+            throw new Error("Interest rate must be a number!");
         }
 
         if (num < 0 || num > 100) {
-            throw new Error("Please enter an interest rate between 0 and 100!");
+            throw new Error("Interest rate must be between 0 and 100!");
         }
 
         this._interestRate = Math.round(num * 100) / 100;
