@@ -31,6 +31,9 @@ function handleClick(e) {
     if (e.target.id === "back") {
         view.allowAccept(true);
     }
+    if (e.target.id === "submit") {
+        view.renderConfirmation();
+    }
     if (e.target.id === "back-to-intro") {
         step = 0;
         view.renderIntro();
@@ -51,9 +54,7 @@ function startFlow() {
 function next() {
     view.clearError();
     try {
-        
-
-        // step1 → step2 (loan details)
+        // step1 -> step2 (loan details)
         if (step === 1) {
             collectData();
             step = 2;
@@ -61,15 +62,10 @@ function next() {
             return;
         }
 
-        // step2 (loan) → step3 (terms)
+        // step2 (loan) -> step3 (terms)
         if (step === 2) {
-            // 1. Check for empty fields first
-            // if (!data.loanAmount || !data.interestRate || !data.loanPeriod) {
-            //     view.showLoanError("Loan amount required!");
-            //     throw new Error("All loan fields are required!");
-            // }
 
-            // 2. Try updating the state, and catch any validation errors (like negative numbers)
+            // Try updating the state, and catch any validation errors (like negative numbers)
             try {
                 collectData();
             } catch (e) {
@@ -83,7 +79,7 @@ function next() {
             return;
         }
 
-        // step3 (terms) → step4 (textarea)
+        // step3 (terms) -> step4 (textarea)
         if (step === 3) {
             const { consents } = view.getStep3Data();
             if (!consents.length) {
@@ -168,11 +164,6 @@ function back() {
         view.renderStep1(state);
         return;
     }
-
-    if (step === 1) {
-        step = 0;
-        view.renderIntro();
-    }
 }
 
 // data collection from steps
@@ -194,7 +185,6 @@ function collectData() {
 
 // live calculator
 function handleInput() {
-    if (step !== 2) return;
     if (step !== 2) return;
 
     try {

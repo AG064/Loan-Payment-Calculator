@@ -18,12 +18,15 @@ export class View {
         const title = document.createElement("h2");
         title.textContent = "Welcome to OrangeBank";
 
+        const desc = document.createElement("p");
+        desc.textContent = "Apply for a personal loan in just a few simple steps. Fill in your details, review the terms, and get an instant monthly payment estimate.";
+
         const btn = document.createElement("button");
         btn.className = "btn";
         btn.id = "start";
         btn.textContent = "Start application";
 
-        this.app.append(title, btn);
+        this.app.append(title, desc, btn);
     }
 
     renderStep1(state) {
@@ -42,20 +45,18 @@ export class View {
 
         this.app.appendChild(title);
 
-        options.forEach((opt, index) => {
+        options.forEach((opt) => {
             const label = document.createElement("label");
             label.htmlFor = opt.id;
             label.className = "radio-label";
 
-            label.setAttribute("for", "emp-" + index);
             const input = document.createElement("input");
             input.type = "radio";
             input.id = opt.id;
             input.name = "employment";
-            input.id = "emp-" + index;
             input.value = opt.value;
 
-            if (state?._employmentStatus === opt.value) {
+            if (state?.employmentStatus === opt.value) {
                 input.checked = true;
             }
 
@@ -92,7 +93,7 @@ export class View {
             option.value = val;
             option.textContent = val;
 
-            if (state?._income === val) option.selected = true;
+            if (state?.income === val) option.selected = true;
 
             income.appendChild(option);
         });
@@ -113,7 +114,7 @@ export class View {
         loan.className = "form-control";
         loan.type = "number";
         loan.id = "loanAmount";
-        loan.value = state?._loanAmount ?? "";
+        loan.value = state?.loanAmount ?? "";
 
         // period label
         const periodLabel = document.createElement("label");
@@ -131,7 +132,7 @@ export class View {
             option.value = val;
             option.textContent = val + " months";
 
-            if (state?._loanPeriod === val) option.selected = true;
+            if (state?.loanPeriod === val) option.selected = true;
 
             period.appendChild(option);
         });
@@ -151,7 +152,7 @@ export class View {
             option.value = val;
             option.textContent = val + "%";
 
-            if (state?._interestRate === val) option.selected = true;
+            if (state?.interestRate === val) option.selected = true;
 
             rate.appendChild(option);
         });
@@ -165,9 +166,9 @@ export class View {
         span.id = "monthlyPayment";
         
         const initialPayment = calculateMonthlyPayment(
-            state?._loanAmount,
-            state?._interestRate,
-            state?._loanPeriod
+            state?.loanAmount,
+            state?.interestRate,
+            state?.loanPeriod
         );
         
         span.textContent = initialPayment ? initialPayment.toFixed(2) : "0.00";
@@ -275,10 +276,14 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
     renderEmailField() {
         const checkbox = document.querySelector("#receive-offers");
         const input = document.querySelector("#email-notifications");
+        const label = document.querySelector("label[for='email-notifications']");
         if (checkbox.checked) {
             input.hidden = false;
+            label.hidden = false;
         } else {
             input.hidden = true;
+            label.hidden = true;
+            this.hideEmailError();
         }
     }
 
@@ -398,11 +403,11 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         title.textContent = "Summary";
 
         const data = [
-            `Employment: ${state._employmentStatus}`,
-            `Income: ${state._income}`,
-            `Loan: ${state._loanAmount}`,
-            `Period: ${state._loanPeriod}`,
-            `Rate: ${state._interestRate}`,
+            `Employment: ${state.employmentStatus}`,
+            `Income: ${state.income}`,
+            `Loan: ${state.loanAmount}`,
+            `Period: ${state.loanPeriod}`,
+            `Rate: ${state.interestRate}`,
             `Monthly: ${payment.toFixed(2)} €`
         ];
 
@@ -414,14 +419,39 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
             list.appendChild(p);
         });
 
+        const btnGroup = document.createElement("div");
+        btnGroup.className = "navigation";
+
+        const submitBtn = document.createElement("button");
+        submitBtn.className = "btn";
+        submitBtn.id = "submit";
+        submitBtn.textContent = "Submit";
+
+        const backBtn = document.createElement("button");
+        backBtn.className = "btn btn-secondary";
+        backBtn.id = "back-to-intro";
+        backBtn.textContent = "Back To Intro";
+
+        btnGroup.append(submitBtn, backBtn);
+        this.app.append(title, list, btnGroup);
+    }
+
+    renderConfirmation() {
+        this.clear();
+        document.querySelector("#nav-container").classList.add("hidden");
+
+        const title = document.createElement("h2");
+        title.textContent = "Thank you!";
+
+        const message = document.createElement("p");
+        message.textContent = "Your application has been submitted successfully.";
+
         const btn = document.createElement("button");
         btn.className = "btn";
         btn.id = "back-to-intro";
         btn.textContent = "Back To Intro";
 
-
-
-        this.app.append(title, list, btn);
+        this.app.append(title, message, btn);
     }
 
     getStep1Data() {
@@ -455,11 +485,7 @@ Nulla ultricies, risus eu dictum cursus, orci dolor finibus enim, sit amet sempe
         return emailInput?.value || null;
     }
 
-    getEmail() {
-        return {
-            email: document.querySelector("#email-notifications")?.value
-        }
-    }
+
     
     updatePayment(value) {
         const el = document.querySelector("#monthlyPayment");
