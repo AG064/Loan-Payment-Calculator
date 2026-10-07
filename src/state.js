@@ -67,7 +67,7 @@ export class State {
             throw new Error("Loan amount is required and cannot be empty!");
         }
         const num = Number(value);
-        if (Number.isNaN(num)) {
+        if (!Number.isFinite(num)) {
             throw new Error("Loan amount must be a valid number!");
         }
         if (num === 0) {
@@ -88,7 +88,7 @@ export class State {
         const num = Number(value);
         const allowedMonths = [12, 24, 36];
 
-        if (value == null || Number.isNaN(num) || num <= 0) {
+        if (value == null || !Number.isFinite(num) || num <= 0) {
             throw new Error("Please enter a valid loan period!");
         }
 
@@ -107,7 +107,7 @@ export class State {
     set interestRate(value) {
         const num = Number(value);
 
-        if (Number.isNaN(num)) {
+        if (!Number.isFinite(num)) {
             throw new Error("Please enter a valid interest rate!");
         }
 
