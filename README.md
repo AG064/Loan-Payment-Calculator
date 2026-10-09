@@ -29,6 +29,11 @@ To run the application properly:
    * **Python:** Run `python3 -m http.server` or `python -m SimpleHTTPServer`.
 3. Open the provided `localhost` URL in a modern browser.
 
+## Verification
+
+Run `npm test` with Node.js 22 or newer. The tests cover zero-interest loans,
+small interest rates, and invalid numerical inputs without opening the browser.
+
 ## Team
 
 Developed collaboratively by Aleksey Aleksandrovich and Vladimir Nilov.
